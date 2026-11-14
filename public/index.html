@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102b32">
+  <title>SchoolSidekick</title>
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4c0 7-5 12-12 12 7 0 12 5 12 12 0-7 5-12 12-12-7 0-12-5-12-12Z" fill="currentColor"/><circle cx="25" cy="7" r="3" fill="currentColor"/></svg>
+        School<span>Sidekick</span>
+      </a>
+      <a class="saved-link" href="#saved">Saved work <span aria-hidden="true">↘</span></a>
+    </div>
+  </header>
+  <main class="layout">
+    <section class="intro" aria-labelledby="page-title">
+      <h1 id="page-title">A little help goes<br class="desktop-break"> a <em>long way.</em></h1>
+      <p>Get unstuck on schoolwork, practice before a test, or draft a lesson for your class.</p>
+      <div class="rays" aria-hidden="true">
+        <svg viewBox="0 0 200 155" fill="none">
+          <g stroke="currentColor" stroke-width="1.1"><ellipse cx="100" cy="77" rx="85" ry="34" transform="rotate(-26 100 77)"/><ellipse cx="100" cy="77" rx="85" ry="34" transform="rotate(26 100 77)"/><circle cx="100" cy="77" r="64"/></g>
+          <path d="M100 36c0 24-17 41-41 41 24 0 41 17 41 41 0-24 17-41 41-41-24 0-41-17-41-41Z" fill="currentColor"/>
+          <circle cx="157" cy="44" r="7" fill="#fae990"/><circle cx="37" cy="101" r="4" fill="#fae990"/>
+        </svg>
+      </div>
+    </section>
+
+    <section class="workspace" aria-label="Schoolwork tools">
+      <fieldset class="modes">
+        <legend>What are you working on?</legend>
+        <div class="mode-grid">
+          <label class="mode">
+            <input type="radio" name="mode" value="hint" checked>
+            <span class="mode-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M9 18h6m-5 3h4m-5-6a6 6 0 1 1 6 0v3H9z"/></svg>
+            </span>
+            <strong>Get a hint</strong><small>Work through a question</small>
+          </label>
+          <label class="mode">
+            <input type="radio" name="mode" value="practice">
+            <span class="mode-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="m8 10 1 1 2-2m2 2h3m-7 4h7"/></svg>
+            </span>
+            <strong>Practice for a test</strong><small>Try new questions</small>
+          </label>
+          <label class="mode">
+            <input type="radio" name="mode" value="lesson">
+            <span class="mode-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M3 5h18v12H3zM12 17v4m-3 0h6M7 9h10m-10 4h6"/></svg>
+            </span>
+            <strong>Draft a lesson</strong><small>Plan a class activity</small>
+          </label>
+        </div>
+      </fieldset>
+
+      <form class="ask-form" id="ask-form">
+        <label for="question" id="question-label">What are you stuck on?</label>
+        <textarea id="question" rows="3" maxlength="1200" required aria-describedby="privacy" placeholder="Example: How do I start solving 3x + 5 = 20?"></textarea>
+        <div class="form-actions">
+          <button class="example" id="example" type="button">Try an example <span aria-hidden="true">↗</span></button>
+          <button class="primary" id="ask" type="submit">Ask <span aria-hidden="true">→</span></button>
+        </div>
+        <p class="privacy" id="privacy">Your question goes to OpenAI. Leave out names, grades, passwords, and other private details.</p>
+      </form>
+      <p class="status" id="status" role="status"></p>
+      <section class="answer" id="answer" aria-labelledby="answer-title" hidden>
+        <h2 id="answer-title" tabindex="-1">Your hint</h2>
+        <p class="answer-text" id="answer-text"></p>
+        <button class="secondary" type="button" id="save">Save this answer</button>
+      </section>
+    </section>
+
+    <section class="saved" id="saved" aria-labelledby="saved-title">
+      <div class="saved-heading">
+        <h2 id="saved-title">Saved work</h2>
+        <p>Saves on this computer only for now</p>
+      </div>
+      <p id="saved-error" role="status" hidden></p>
+      <div class="saved-items" id="saved-items"></div>
+    </section>
+  </main>
+</body>
+</html>
