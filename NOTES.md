@@ -14,6 +14,7 @@ If OpenAI rejects the key, replace it in `.env` and try again.
 - Teacher page: short writing feedback, one-day lesson plans, and activities and tests with a collapsible answer key. Remove student details before submitting work and review drafts before use.
 - Save responses and calendar events in your browser. Saves on this computer only for now
 - Both pages are available on the local preview. They organize tools and saved work by role, with no separate accounts or sign-in.
+- AI tools answer within their own purpose and redirect unrelated requests. The calendar saves events without using AI.
 
 ## What's next
 
@@ -25,6 +26,5 @@ Try sample school questions and review the replies with a teacher before recordi
 - The user can press a Report this answer button on any AI reply.
 - The user can, as a teacher, edit an AI lesson plan before using it.
 - The user can choose a subject and grade level before asking questions.
-- The user can see the AI redirect off-topic questions back to schoolwork.
 - The user can, as a teacher, get grading ideas for a pasted student answer. The current improvement tool gives feedback without assigning a grade.
 - The user can print a lesson plan or practice test.
