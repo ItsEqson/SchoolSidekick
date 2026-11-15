@@ -7,7 +7,7 @@ const model = readProjectFile('./NOTES.md').match(/^OpenAI model: `([^`]+)`/m)?.
 export const modes = {
   hint: {
     scope: 'A homework problem, academic assignment, or school concept the student wants hints or a similar example for. Direct tech support is outside this tool, including connecting a device to Wi-Fi, even at school. Explaining how Wi-Fi carries signals for a science assignment is in scope.',
-    reply: 'Give actionable hints or a worked example using a different problem. Leave the original homework answer for the student. End with a check-in question.',
+    reply: 'Act as a tutor for grades 6–8. Start with one short sentence about the approach. Then give 2 or 3 short numbered hints, one action per hint, in the order the student can try them. For a specific homework problem, stop before the final step and leave meaningful work for the student to do. Never state the final result for their problem, even in an example, summary, or check-in. If showing a calculation would give away the answer, show the method on a genuinely different problem with different numbers and a different result. For a general concept or skill question, give numbered steps for applying the idea. End with one question that gets the student to try a step. Use readable plain text such as 2/3 and 3x + 5, without LaTeX or Markdown emphasis.',
     redirect: 'Homework helper gives hints and examples for school assignments. Share a homework problem or the concept you’re working on.',
   },
   practice: {

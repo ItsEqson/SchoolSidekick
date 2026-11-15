@@ -20,6 +20,7 @@ Saved work and calendar events stay in the browser. The online site starts with 
 ## What's done
 
 - Student page: homework hints, a calendar, study guides and practice, class notes, essay feedback, and a school chatbot.
+- Homework helper gives short numbered hints and leaves the final answer for the student. To try it, enter “How should I start adding 2/3 and 3/4?” and click **Get a hint**.
 - Teacher page: short writing feedback, one-day lesson plans, and activities and tests with a collapsible answer key. Remove student details before submitting work and review drafts before use.
 - Save responses and calendar events in your browser. Saves on this computer only for now
 - Both pages are available on the local preview. They organize tools and saved work by role, with no separate accounts or sign-in.
