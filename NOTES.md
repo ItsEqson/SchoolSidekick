@@ -6,12 +6,14 @@ OpenAI model: `gpt-5.6-luna`
 
 Run `npm start` and open http://127.0.0.1:4173.
 The local server reads the OpenAI key from `.env`.
+If OpenAI rejects the key, replace it in `.env` and try again.
 
 ## What's done
 
-- Get a step-by-step hint, practice for a test, or draft a lesson. Each tool has a sample question for a quick demo.
-- AI replies use the safety instructions in BRIEF.md. Teachers review lesson drafts before using them.
-- Save and remove answers in your browser. Saves on this computer only for now
+- Student page: homework hints, a calendar, study guides and practice, class notes, essay feedback, and a school chatbot.
+- Teacher page: short writing feedback, one-day lesson plans, and activities and tests with a collapsible answer key. Remove student details before submitting work and review drafts before use.
+- Save responses and calendar events in your browser. Saves on this computer only for now
+- Both pages are available on the local preview. They organize tools and saved work by role, with no separate accounts or sign-in.
 
 ## What's next
 
@@ -19,11 +21,10 @@ Try sample school questions and review the replies with a teacher before recordi
 
 ## Maybe Later
 
-- The user can, as a teacher, generate a practice test with an answer key.
 - The user can check practice answers and see explanations for mistakes.
 - The user can press a Report this answer button on any AI reply.
 - The user can, as a teacher, edit an AI lesson plan before using it.
 - The user can choose a subject and grade level before asking questions.
 - The user can see the AI redirect off-topic questions back to schoolwork.
-- The user can, as a teacher, get grading ideas for a pasted student answer.
+- The user can, as a teacher, get grading ideas for a pasted student answer. The current improvement tool gives feedback without assigning a grade.
 - The user can print a lesson plan or practice test.

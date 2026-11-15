@@ -3,13 +3,16 @@ import { readFileSync } from 'node:fs';
 import { askOpenAI, modes } from './openai.js';
 
 const host = '127.0.0.1';
-const port = 4173;
+const port = Number(process.env.PORT ?? 4173);
 const origin = `http://${host}:${port}`;
 const files = new Map([
   ['/', ['index.html', 'text/html']],
+  ['/student', ['index.html', 'text/html']],
+  ['/teacher', ['index.html', 'text/html']],
   ['/style.css', ['style.css', 'text/css']],
   ['/app.js', ['app.js', 'text/javascript']],
   ['/storage.js', ['storage.js', 'text/javascript']],
+  ['/planner.js', ['planner.js', 'text/javascript']],
 ]);
 const assets = new Map([...files].map(([route, [file, type]]) => [route, {
   body: readFileSync(new URL(`./public/${file}`, import.meta.url)), type,
@@ -25,13 +28,18 @@ async function readQuestion(req) {
   req.setEncoding('utf8');
   for await (const chunk of req.iterator({ destroyOnReturn: false })) {
     body += chunk;
-    if (body.length > 8192) return null;
+    if (body.length > 48000) return null;
   }
   try {
     const data = JSON.parse(body);
     if (typeof data?.mode !== 'string' || !Object.hasOwn(modes, data.mode) || typeof data.question !== 'string') return null;
     const question = data.question.trim();
-    return question.length && question.length <= 1200 ? { mode: data.mode, question } : null;
+    if (!question || question.length > 4000) return null;
+    const history = data.mode === 'chat' ? data.history ?? [] : [];
+    if (!Array.isArray(history) || history.length > 8 || history.length % 2 !== 0) return null;
+    if (!history.every((entry, index) => entry?.role === (index % 2 ? 'assistant' : 'user')
+      && typeof entry.content === 'string' && entry.content.length <= 2400)) return null;
+    return { mode: data.mode, question, history: history.map(({ role, content }) => ({ role, content })) };
   } catch {
     return null;
   }
@@ -53,10 +61,13 @@ createServer(async (req, res) => {
 
   try {
     const request = await readQuestion(req);
-    if (!request) return json(res, 400, { error: 'Choose a tool and enter a question of up to 1,200 characters.' });
-    const answer = await askOpenAI(request.mode, request.question);
+    if (!request) return json(res, 400, { error: 'Choose a tool and enter up to 4,000 characters.' });
+    const answer = await askOpenAI(request.mode, request.question, request.history);
     return json(res, 200, { answer });
-  } catch {
+  } catch (error) {
+    if (error.cause === 'invalid-key') {
+      return json(res, 503, { error: 'OpenAI rejected your API key. Update the key in .env, then try again.' });
+    }
     return json(res, 503, { error: 'I couldn’t reach your AI helper. Check your OpenAI key and internet connection, then try again.' });
   }
 }).listen(port, host, () => console.log(`SchoolSidekick is ready at ${origin}`));
