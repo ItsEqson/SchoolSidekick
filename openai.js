@@ -1,5 +1,4 @@
 import { readFileSync } from 'node:fs';
-import { parseEnv } from 'node:util';
 
 const readProjectFile = (name) => readFileSync(new URL(name, import.meta.url), 'utf8');
 const brief = readProjectFile('./BRIEF.md').split('## My AI’s instructions')[1].trim();
@@ -48,8 +47,7 @@ export const modes = {
   },
 };
 
-export async function askOpenAI(mode, question, history) {
-  const { OPENAI_API_KEY: key } = parseEnv(readProjectFile('./.env'));
+export async function askOpenAI(mode, question, history, key) {
   if (!key || key === 'paste-your-key-here' || !model) throw new Error('AI configuration is missing');
   const tool = modes[mode];
 

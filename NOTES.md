@@ -8,6 +8,15 @@ Run `npm start` and open http://127.0.0.1:4173.
 The local server reads the OpenAI key from `.env`.
 If OpenAI rejects the key, replace it in `.env` and try again.
 
+## How to put it online with Vercel
+
+1. In Vercel, choose **Add New → Project** and import the GitHub repository `ItsEqson/SchoolSidekick`.
+2. Under **Environment Variables**, add `OPENAI_API_KEY` with your key. Enable it for **Production**, and for **Preview** if you want AI to work on preview deployments too.
+3. Click **Deploy**. The repository already sets the framework, static folder, page routes, and AI function. Keep the root directory at the repository root.
+4. Open the Vercel URL and try **Homework helper → Try an example → Get a hint**. If you add or change the key after deploying, redeploy.
+
+Saved work and calendar events stay in the browser. The online site starts with its own saved work, separate from the local preview.
+
 ## What's done
 
 - Student page: homework hints, a calendar, study guides and practice, class notes, essay feedback, and a school chatbot.

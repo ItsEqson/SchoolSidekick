@@ -1,6 +1,8 @@
 import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
-import { askOpenAI, modes } from './openai.js';
+import { Readable } from 'node:stream';
+import { parseEnv } from 'node:util';
+import { handleAsk } from './ask.js';
 
 const host = '127.0.0.1';
 const port = Number(process.env.PORT ?? 4173);
@@ -23,26 +25,8 @@ function json(res, status, body) {
   res.end(JSON.stringify(body));
 }
 
-async function readQuestion(req) {
-  let body = '';
-  req.setEncoding('utf8');
-  for await (const chunk of req.iterator({ destroyOnReturn: false })) {
-    body += chunk;
-    if (body.length > 48000) return null;
-  }
-  try {
-    const data = JSON.parse(body);
-    if (typeof data?.mode !== 'string' || !Object.hasOwn(modes, data.mode) || typeof data.question !== 'string') return null;
-    const question = data.question.trim();
-    if (!question || question.length > 4000) return null;
-    const history = data.mode === 'chat' ? data.history ?? [] : [];
-    if (!Array.isArray(history) || history.length > 8 || history.length % 2 !== 0) return null;
-    if (!history.every((entry, index) => entry?.role === (index % 2 ? 'assistant' : 'user')
-      && typeof entry.content === 'string' && entry.content.length <= 2400)) return null;
-    return { mode: data.mode, question, history: history.map(({ role, content }) => ({ role, content })) };
-  } catch {
-    return null;
-  }
+function readLocalKey() {
+  return parseEnv(readFileSync(new URL('./.env', import.meta.url), 'utf8')).OPENAI_API_KEY;
 }
 
 createServer(async (req, res) => {
@@ -55,19 +39,13 @@ createServer(async (req, res) => {
     return res.end(asset.body);
   }
   if (req.method !== 'POST' || req.url !== '/api/ask') return json(res, 404, { error: 'Page not found.' });
-  if (req.headers.origin !== origin || req.headers['content-type'] !== 'application/json') {
-    return json(res, 403, { error: 'Please ask from the SchoolSidekick page.' });
-  }
-
-  try {
-    const request = await readQuestion(req);
-    if (!request) return json(res, 400, { error: 'Choose a tool and enter up to 4,000 characters.' });
-    const answer = await askOpenAI(request.mode, request.question, request.history);
-    return json(res, 200, { answer });
-  } catch (error) {
-    if (error.cause === 'invalid-key') {
-      return json(res, 503, { error: 'OpenAI rejected your API key. Update the key in .env, then try again.' });
-    }
-    return json(res, 503, { error: 'I couldn’t reach your AI helper. Check your OpenAI key and internet connection, then try again.' });
-  }
+  const request = new Request(`${origin}/api/ask`, {
+    method: 'POST',
+    headers: req.headers,
+    body: Readable.toWeb(req, { strategy: { highWaterMark: 1 } }),
+    duplex: 'half',
+  });
+  const response = await handleAsk(request, readLocalKey, 'your OpenAI key in .env and your internet connection');
+  res.writeHead(response.status, Object.fromEntries(response.headers));
+  res.end(await response.text());
 }).listen(port, host, () => console.log(`SchoolSidekick is ready at ${origin}`));
