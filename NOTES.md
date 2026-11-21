@@ -48,6 +48,16 @@ Run `npm test` to check key caching, expiry, service errors, and the single refr
 - Saved homework replies reopen with the same sections and diagrams. Older saves, teacher answer keys, and calendar data keep their existing format.
 - Verified in the browser with a real fraction question, including saving, reloading, and reopening the visual reply at a narrow screen width. Live server checks also passed for algebra, science, bullying refusal, off-topic redirection, practice, lesson plans, and original tests with answer keys. All 11 automated tests passed with `npm test`.
 
+## MVP 2 check — November 20, 2026
+
+Practice questions work. The initial browser check found that math was displayed as raw LaTeX commands. Updated the Studying instructions to use readable plain text, with Quick review, Example, and Practice questions sections. Students receive 3–5 original questions without practice answers; the example is separate. A missing topic prompts a clarification question.
+
+To try it in two steps:
+1. Open the student workspace and choose **Studying**.
+2. Enter a topic (or click **Try an example**), then click **Start studying**.
+
+Verified real replies for fractions, one-step equations, the water cycle, and nouns and verbs. All four returned 3–5 questions with readable formatting. Checked missing-topic clarification and off-topic redirection. In the browser, generated fraction practice, saved it, reloaded, and reopened it successfully. Homework hints and teacher lesson plans passed live checks; all 11 automated tests passed. Answer checking remains a later feature.
+
 ## Maybe Later
 
 - The user can check practice answers and see explanations for mistakes.

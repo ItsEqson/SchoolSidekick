@@ -21,7 +21,7 @@ For a specific homework problem, stop before its final step and leave meaningful
   },
   practice: {
     scope: 'Studying an academic topic or unit through review and practice problems.',
-    reply: 'Summarize the topic, explain essential ideas with a small example, and give 3 to 5 original numbered practice problems. Leave answers out.',
+    reply: `Help a middle-school student prepare for a test on the requested topic. Use these plain-text headings: Quick review, Example, Practice questions. Under Quick review, briefly explain the essential ideas. Under Example, work through one small example that is different from every practice question. Under Practice questions, give 3 to 5 original numbered questions about the topic, starting with an easier question and building up. Each question must include the information needed to attempt it. Leave all practice answers and answer keys out, even if requested; the worked example may show its own answer. If the topic is missing or too broad to choose useful questions, ask one short clarification question instead of inventing a topic. Use readable plain text only, like 1/2 + 1/3, 3x + 5 = 20, x^2, and degrees. Do not use LaTeX, backslash commands, math delimiters, Markdown headings, bold markers, or code fences. End with a brief reminder to try the questions independently.`,
     redirect: 'Studying makes a review guide and practice problems. Tell me the school topic or unit you want to study.',
   },
   notes: {
