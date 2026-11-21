@@ -70,6 +70,16 @@ textarea::placeholder, #event-title::placeholder { color: #5e6e67; }
 .status { color: #305e4f; line-height: 1.5; margin-bottom: 0; }
 .answer { background: #eef3e8; margin-top: 18px; padding: 17px; border-radius: 12px; }
 .answer h3 { margin: 0; font-size: 19px; }
+.learning-section { margin-block: 14px; padding: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; white-space: normal; }
+.learning-section h4 { margin: 0 0 8px; color: var(--teal); font-size: 16px; }
+.learning-section p { margin: 0; white-space: pre-wrap; }
+.visual-diagram { margin: 0; padding: 12px; background: var(--green); border-radius: 7px; font-family: Consolas, monospace; font-size: 14px; line-height: 1.6; white-space: pre; overflow-x: auto; }
+.fraction-figure { margin: 12px 0; }
+.fraction-figure figcaption { font-weight: 700; margin-bottom: 6px; }
+.fraction-bar { display: flex; height: 32px; border: 2px solid var(--teal); border-radius: 5px; overflow: hidden; }
+.fraction-piece { flex: 1; min-width: 0; background: var(--paper); }
+.fraction-piece + .fraction-piece { border-left: 1px solid var(--teal); }
+.fraction-piece.shaded { background: var(--teal); }
 .answer-text, details p, .message p { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55; }
 .answer details { margin-bottom: 12px; }
 .chat { display: grid; gap: 12px; max-height: 390px; overflow: auto; margin-bottom: 16px; padding: 6px; }

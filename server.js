@@ -14,6 +14,7 @@ const files = new Map([
   ['/app.js', ['app.js', 'text/javascript']],
   ['/storage.js', ['storage.js', 'text/javascript']],
   ['/planner.js', ['planner.js', 'text/javascript']],
+  ['/hints.js', ['hints.js', 'text/javascript']],
 ]);
 const assets = new Map([...files].map(([route, [file, type]]) => [route, {
   body: readFileSync(new URL(`./public/${file}`, import.meta.url)), type,

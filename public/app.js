@@ -1,10 +1,11 @@
 import { loadSaved, removeAnswer, saveAnswer } from './storage.js';
 import { renderPlanner } from './planner.js';
+import { renderHint } from './hints.js';
 
 const studentTools = {
   hint: {
-    name: 'Homework helper', icon: '↗', description: 'Get hints or see a similar example so you can finish the problem yourself.',
-    prompt: 'What are you stuck on?', example: 'How do I start solving 3x + 5 = 20?', button: 'Get a hint', result: 'Your hint',
+    name: 'Homework helper', icon: '↗', description: 'Get step-by-step hints, a worked example, and a simple visual when it helps. Then try it yourself.',
+    prompt: 'What are you stuck on?', example: 'How do I start solving 3x + 5 = 20?', button: 'Get a hint', result: 'Let’s work through it',
   },
   planner: {
     name: 'Time organizer', icon: '□', description: 'Pick a day and add a reminder for homework, quizzes, or study time.',
@@ -88,7 +89,14 @@ function renderSaved() {
       const card = document.createElement('details');
       const summary = document.createElement('summary');
       summary.append(textElement('span', item.label), textElement('strong', item.title));
-      card.append(summary, textElement('p', item.answer));
+      card.append(summary);
+      if (item.label === studentTools.hint.name) {
+        const content = document.createElement('div');
+        renderHint(content, item.answer);
+        card.append(content);
+      } else {
+        card.append(textElement('p', item.answer));
+      }
       if (item.key) addKey(card, item.key);
       const remove = textElement('button', 'Remove');
       remove.type = 'button';
@@ -181,7 +189,8 @@ function displayAnswer(mode, text) {
   const answer = marker ? text.slice(0, marker.index).trim() : text;
   const key = marker ? text.slice(marker.index + marker[0].length).trim() : '';
   answerTitle.textContent = tool.result;
-  answerText.textContent = answer;
+  if (mode === 'hint') renderHint(answerText, answer);
+  else answerText.textContent = answer;
   keyText.textContent = key;
   answerKey.open = false;
   answerKey.hidden = !key;

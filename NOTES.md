@@ -22,7 +22,7 @@ Saved work and calendar events stay in the browser. The online site starts with 
 ## What's done
 
 - Student page: homework hints, a calendar, study guides and practice, class notes, essay feedback, and a school chatbot.
-- Homework helper gives short numbered hints and leaves the final answer for the student. To try it, enter “How should I start adding 2/3 and 3/4?” and click **Get a hint**.
+- Homework helper gives numbered hints, a similar worked example, and an optional **Picture it** section with fraction bars or a simple labeled text diagram. It ends with **Your turn** and leaves the homework answer for the student. To try it, enter “How should I start adding 2/3 and 3/4? Please show a visual.” and click **Get a hint**.
 - Teacher page: short writing feedback, one-day lesson plans, and activities and tests with a collapsible answer key. Remove student details before submitting work and review drafts before use.
 - Save responses and calendar events in your browser. Saves on this computer only for now
 - Both pages are available on the local preview. They organize tools and saved work by role, with no separate accounts or sign-in.
@@ -41,6 +41,12 @@ To try it in two steps:
 2. Type a school question (or click **Try an example**), then click **Get a hint**.
 
 Run `npm test` to check key caching, expiry, service errors, and the single refresh/retry after a rejected key. Credentials remain in the ignored `.env` file. The local page loaded in Chrome; automated button-click verification was interrupted by the computer-use browser URL check.
+
+## Hints, examples, and visuals — November 20, 2026
+
+- Homework replies now have separate Hint, A similar example, optional Picture it, and Your turn sections. Visuals illustrate the similar example or concept. Fraction bars are drawn by the app from bounded numeric counts, with a text description for screen readers; other diagrams use plain text. AI text is never inserted as HTML.
+- Saved homework replies reopen with the same sections and diagrams. Older saves, teacher answer keys, and calendar data keep their existing format.
+- Verified in the browser with a real fraction question, including saving, reloading, and reopening the visual reply at a narrow screen width. Live server checks also passed for algebra, science, bullying refusal, off-topic redirection, practice, lesson plans, and original tests with answer keys. All 11 automated tests passed with `npm test`.
 
 ## Maybe Later
 
