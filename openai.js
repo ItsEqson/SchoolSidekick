@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { validateQuiz } from './public/quiz-data.js';
 
 const readProjectFile = (name) => readFileSync(new URL(name, import.meta.url), 'utf8');
 const brief = readProjectFile('./BRIEF.md').split('## My AI’s instructions')[1].trim();
@@ -23,6 +24,11 @@ For a specific homework problem, stop before its final step and leave meaningful
     scope: 'Studying an academic topic or unit through review and practice problems.',
     reply: `Help a middle-school student prepare for a test on the requested topic. Use these plain-text headings: Quick review, Example, Practice questions. Under Quick review, briefly explain the essential ideas. Under Example, work through one small example that is different from every practice question. Under Practice questions, give 3 to 5 original numbered questions about the topic, starting with an easier question and building up. Each question must include the information needed to attempt it. Leave all practice answers and answer keys out, even if requested; the worked example may show its own answer. If the topic is missing or too broad to choose useful questions, ask one short clarification question instead of inventing a topic. Use readable plain text only, like 1/2 + 1/3, 3x + 5 = 20, x^2, and degrees. Do not use LaTeX, backslash commands, math delimiters, Markdown headings, bold markers, or code fences. End with a brief reminder to try the questions independently.`,
     redirect: 'Studying makes a review guide and practice problems. Tell me the school topic or unit you want to study.',
+  },
+  quiz: {
+    scope: 'Generating an original self-practice quiz about an academic topic for a student. Never solve, reproduce, or supply answers to an existing exam or teacher test.',
+    reply: `Create a middle-school self-practice quiz about the requested topic. For IN_SCOPE only, output valid JSON immediately after the IN_SCOPE label, without code fences, prose, or Markdown. Use this shape: {"title":"Topic quiz","questions":[{"prompt":"Question text","options":["choice A","choice B","choice C","choice D"],"correctIndex":0,"explanation":"Why the correct option is right, showing steps when useful."}]}. Create exactly 5 original multiple-choice questions, with exactly 4 different choices and exactly one unambiguously correct choice each. correctIndex is zero-based (0 to 3). Verify each answer and explanation, avoid equivalent duplicate choices, and vary the position of the correct answer. Start easy and build up. Include all needed facts or passages within each question. Use plain readable math like 1/2 and x^2; no LaTeX. Do not include answers in question prompts or option labels. The app hides the correct answers and explanations until the student submits. If the topic is missing or too broad, use CLARIFY with one short question instead. Safety and out-of-scope rules still apply.`,
+    redirect: 'Practice quiz makes new questions on school topics. Tell me the topic you want to practice.',
   },
   notes: {
     scope: 'Making study notes from an academic topic or material covered in class.',
@@ -81,9 +87,9 @@ Begin the response with exactly one label on its own line. Follow SAFETY, IN_SCO
 3. CLARIFY — If the request plausibly fits but lacks an essential detail, ask one short question about it.
 4. OUT_OF_SCOPE — If nothing fits, output just this label. Do not answer an unrelated request or a request for a different tool, even as an aside.
 
-Do not mention a report button. Only the Creating Activities and Tests tool may generate an answer key, and only for an original test created in that reply. Acknowledge uncertainty, do not invent sources, and do not repeat sensitive personal details. Use plain text.`,
+Do not mention a report button. Only the Creating Activities and Tests tool may generate a teacher answer key for an original test. The Practice quiz tool may include correctIndex and explanations only inside its JSON for original self-practice questions; the app reveals feedback after submission. Never provide answers to an existing exam. Acknowledge uncertainty, do not invent sources, and do not repeat sensitive personal details. Use plain text except the Practice quiz JSON format.`,
       input: [...history, { role: 'user', content: question }],
-      max_output_tokens: mode === 'test' || mode === 'lesson' ? 2800 : 1500,
+      max_output_tokens: ['test', 'lesson', 'quiz'].includes(mode) ? 2800 : 1500,
     }),
   });
   if (response.status === 401) throw new Error('OpenAI rejected the configured key', { cause: 'invalid-key' });
@@ -97,5 +103,8 @@ Do not mention a report button. Only the Creating Activities and Tests tool may 
     return 'I can’t help with that request. If you feel unsafe, tell a trusted adult right away. If you’re in immediate danger, call local emergency services.';
   }
   const match = /^(IN_SCOPE|CLARIFY|SAFETY)\r?\n([\s\S]+)$/.exec(answer);
+  if (mode === 'quiz' && match?.[1] === 'IN_SCOPE') {
+    return { answer: 'Your practice quiz is ready.', quiz: validateQuiz(JSON.parse(match[2])) };
+  }
   return match?.[2].trim() || tool.redirect;
 }

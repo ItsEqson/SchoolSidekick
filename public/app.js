@@ -1,6 +1,7 @@
 import { loadSaved, removeAnswer, saveAnswer } from './storage.js';
 import { renderPlanner } from './planner.js';
 import { renderHint } from './hints.js';
+import { renderQuiz } from './quiz.js';
 
 const studentTools = {
   hint: {
@@ -13,6 +14,10 @@ const studentTools = {
   practice: {
     name: 'Studying', icon: '✓', description: 'Review the big ideas in a topic and try some practice problems.',
     prompt: 'What topic or unit are you studying?', example: 'Adding fractions with different denominators', button: 'Start studying', result: 'Study guide and practice',
+  },
+  quiz: {
+    name: 'Practice quiz', icon: '?', description: 'Test yourself with five multiple-choice questions. Check your score and learn from explanations after you answer.',
+    prompt: 'What topic would you like a quiz on?', example: 'Equivalent fractions for sixth grade', button: 'Make a quiz', result: 'Practice quiz',
   },
   notes: {
     name: 'Note taking', icon: '≡', description: 'Turn a topic or what you covered in class into notes you can study later.',
@@ -53,6 +58,7 @@ const example = document.querySelector('#example');
 const ask = document.querySelector('#ask');
 const status = document.querySelector('#status');
 const result = document.querySelector('#answer');
+const quizPanel = document.querySelector('#quiz-panel');
 const answerTitle = document.querySelector('#answer-title');
 const answerText = document.querySelector('#answer-text');
 const answerKey = document.querySelector('#answer-key');
@@ -67,6 +73,7 @@ const drafts = new Map();
 let currentMode;
 let currentAnswer;
 let asking = false;
+let hasQuiz = false;
 
 function textElement(tag, text) {
   const element = document.createElement(tag);
@@ -135,6 +142,7 @@ function selectTool(mode) {
   document.querySelector('#tool-description').textContent = tool.description;
   document.querySelector('#ai-panel').hidden = mode === 'planner';
   document.querySelector('#planner').hidden = mode !== 'planner';
+  quizPanel.hidden = mode !== 'quiz' || !hasQuiz;
   if (mode === 'planner') {
     renderPlanner();
     return;
@@ -227,6 +235,7 @@ form.addEventListener('submit', async (event) => {
   result.hidden = true;
   currentAnswer = null;
   const pending = chatting ? addMessage('user', input) : null;
+  if (mode === 'quiz') quizPanel.hidden = true;
   let answered = false;
   try {
     const response = await fetch('/api/ask', {
@@ -239,7 +248,12 @@ form.addEventListener('submit', async (event) => {
       status.textContent = data.error?.message ?? connectionMessage;
       return;
     }
-    if (chatting) {
+    if (mode === 'quiz' && data.quiz) {
+      renderQuiz(quizPanel, data.quiz, (title, summary, button) => {
+        saveWork(makeAnswer('Practice quiz', title, summary), button);
+      });
+      hasQuiz = true;
+    } else if (chatting) {
       addMessage('assistant', data.answer, true);
       messages.push({ role: 'user', content: input.slice(0, 2400) }, { role: 'assistant', content: data.answer.slice(0, 2400) });
       if (messages.length > 8) messages.splice(0, 2);
@@ -252,6 +266,7 @@ form.addEventListener('submit', async (event) => {
   } catch {
     status.textContent = connectionMessage;
   } finally {
+    if (mode === 'quiz' && !answered && hasQuiz) quizPanel.hidden = false;
     if (!answered) pending?.remove();
     asking = false;
     ask.disabled = false;

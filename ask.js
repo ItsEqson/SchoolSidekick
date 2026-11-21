@@ -62,7 +62,7 @@ export async function handleAsk(request) {
         throw retryError;
       }
     }
-    return json({ answer });
+    return json(typeof answer === 'string' ? { answer } : answer);
   } catch (error) {
     const failure = error instanceof KeygenError ? error : error.cause === 'invalid-key'
       ? new KeygenError('The AI helper could not authenticate.', 'MindDo returned a key that OpenAI rejected. Check the key service before trying again.')
