@@ -66,3 +66,13 @@ Verified real replies for fractions, one-step equations, the water cycle, and no
 - The user can choose a subject and grade level before asking questions.
 - The user can, as a teacher, get grading ideas for a pasted student answer. The current improvement tool gives feedback without assigning a grade.
 - The user can print a lesson plan or practice test.
+
+## MVP 3 check — November 20, 2026
+
+Teacher lesson plans work fully in the MVP. The teacher page loads, the **Making lesson plans** tool is available, and a real request for a 25-minute sixth-grade water-cycle lesson returned an organized draft with a learning goal, materials, timed activities, and a quick check for understanding. Teachers should review every AI draft before teaching it.
+
+To try it in two steps:
+1. Run `npm start`, open http://127.0.0.1:4173/teacher, and choose **Making lesson plans**.
+2. Enter a topic (or click **Try an example**), then click **Draft a lesson**.
+
+The full automated suite passes with 14 tests, and the working tree was clean before this check.
