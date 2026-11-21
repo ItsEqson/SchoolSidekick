@@ -5,15 +5,17 @@ OpenAI model: `gpt-5.6-luna`
 ## How to run it
 
 Run `npm start` and open http://127.0.0.1:4173.
-The local server reads the OpenAI key from `.env`.
-If OpenAI rejects the key, replace it in `.env` and try again.
+The AI key comes from the server-only `getKey()` function in `keygen.js`, which requests it from MindDo.
+Set `KEYGEN_URL` and `KEYGEN_TOKEN` in the ignored `.env` file, then restart the server. Never put credentials in chat or browser code.
+The server caches the key until its ISO 8601 `expiresAt` timestamp and shares in-flight lookups. If OpenAI rejects it, the server clears it and makes one refresh and one retry; it never retries in a loop.
+MindDo failures display `error.message` to the user and log `error.fix` only on the server. Keys and tokens are never returned to the page or logged.
 
 ## How to put it online with Vercel
 
 1. In Vercel, choose **Add New → Project** and import the GitHub repository `ItsEqson/SchoolSidekick`.
-2. Under **Environment Variables**, add `OPENAI_API_KEY` with your key. Enable it for **Production**, and for **Preview** if you want AI to work on preview deployments too.
+2. Under **Environment Variables**, add `KEYGEN_URL` and `KEYGEN_TOKEN` with your MindDo settings. Enable them for **Production**, and for **Preview** if you want AI to work on preview deployments too. These are server-only variables; do not use a public/client prefix.
 3. Click **Deploy**. The repository already sets the framework, static folder, page routes, and AI function. Keep the root directory at the repository root.
-4. Open the Vercel URL and try **Homework helper → Try an example → Get a hint**. If you add or change the key after deploying, redeploy.
+4. Open the Vercel URL and try **Homework helper → Try an example → Get a hint**. If you add or change the MindDo settings after deploying, redeploy.
 
 Saved work and calendar events stay in the browser. The online site starts with its own saved work, separate from the local preview.
 
@@ -29,6 +31,16 @@ Saved work and calendar events stay in the browser. The online site starts with 
 ## What's next
 
 Try sample school questions and review the replies with a teacher before recording the demo.
+
+## MVP 1 check — November 20, 2026
+
+Homework helper works with the configured MindDo key service and real OpenAI replies. Checked through the local HTTP server: algebra and science questions returned numbered hints; an unrelated shopping request was redirected. The fraction-addition check also returned hints without the final answer. Practice questions and teacher lesson plans were checked as well.
+
+To try it in two steps:
+1. Run `npm start`, open http://127.0.0.1:4173/student, and choose **Homework helper**.
+2. Type a school question (or click **Try an example**), then click **Get a hint**.
+
+Run `npm test` to check key caching, expiry, service errors, and the single refresh/retry after a rejected key. Credentials remain in the ignored `.env` file. The local page loaded in Chrome; automated button-click verification was interrupted by the computer-use browser URL check.
 
 ## Maybe Later
 

@@ -1,4 +1,5 @@
 import { askOpenAI, modes } from './openai.js';
+import { getKey, invalidateKey, KeygenError } from './keygen.js';
 
 function json(body, status = 200) {
   return Response.json(body, { status, headers: { 'Cache-Control': 'no-store' } });
@@ -37,21 +38,37 @@ async function readQuestion(request) {
   }
 }
 
-export async function handleAsk(request, readKey, keyLocation) {
+export async function handleAsk(request) {
   const contentType = request.headers.get('content-type')?.split(';')[0].trim();
   if (request.headers.get('origin') !== new URL(request.url).origin || contentType !== 'application/json') {
-    return json({ error: 'Please ask from the SchoolSidekick page.' }, 403);
+    return json({ error: { message: 'Please ask from the SchoolSidekick page.' } }, 403);
   }
 
   const input = await readQuestion(request);
-  if (!input) return json({ error: 'Choose a tool and enter up to 4,000 characters.' }, 400);
+  if (!input) return json({ error: { message: 'Choose a tool and enter up to 4,000 characters.' } }, 400);
   try {
-    const answer = await askOpenAI(input.mode, input.question, input.history, readKey());
+    let key = await getKey();
+    let answer;
+    try {
+      answer = await askOpenAI(input.mode, input.question, input.history, key);
+    } catch (error) {
+      if (error.cause !== 'invalid-key') throw error;
+      invalidateKey(key);
+      key = await getKey();
+      try {
+        answer = await askOpenAI(input.mode, input.question, input.history, key);
+      } catch (retryError) {
+        if (retryError.cause === 'invalid-key') invalidateKey(key);
+        throw retryError;
+      }
+    }
     return json({ answer });
   } catch (error) {
-    if (error.cause === 'invalid-key') {
-      return json({ error: `OpenAI rejected the API key. Check ${keyLocation} and try again.` }, 503);
-    }
-    return json({ error: `I couldn’t reach your AI helper. Check ${keyLocation} and try again.` }, 503);
+    const failure = error instanceof KeygenError ? error : error.cause === 'invalid-key'
+      ? new KeygenError('The AI helper could not authenticate.', 'MindDo returned a key that OpenAI rejected. Check the key service before trying again.')
+      : new KeygenError('I couldn’t reach your AI helper.', 'Check the OpenAI service, configured model, and internet connection before trying again.');
+    console.error(failure.fix);
+    // Fix instructions are for server operators only.
+    return json({ error: { message: failure.message } }, 503);
   }
 }

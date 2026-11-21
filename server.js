@@ -1,7 +1,6 @@
 import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
 import { Readable } from 'node:stream';
-import { parseEnv } from 'node:util';
 import { handleAsk } from './ask.js';
 
 const host = '127.0.0.1';
@@ -25,10 +24,6 @@ function json(res, status, body) {
   res.end(JSON.stringify(body));
 }
 
-function readLocalKey() {
-  return parseEnv(readFileSync(new URL('./.env', import.meta.url), 'utf8')).OPENAI_API_KEY;
-}
-
 createServer(async (req, res) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; frame-ancestors 'none'; base-uri 'none'");
@@ -45,7 +40,7 @@ createServer(async (req, res) => {
     body: Readable.toWeb(req, { strategy: { highWaterMark: 1 } }),
     duplex: 'half',
   });
-  const response = await handleAsk(request, readLocalKey, 'your OpenAI key in .env and your internet connection');
+  const response = await handleAsk(request);
   res.writeHead(response.status, Object.fromEntries(response.headers));
   res.end(await response.text());
 }).listen(port, host, () => console.log(`SchoolSidekick is ready at ${origin}`));

@@ -60,7 +60,7 @@ const save = document.querySelector('#save');
 const chat = document.querySelector('#chat');
 const savedError = document.querySelector('#saved-error');
 const savedItems = document.querySelector('#saved-items');
-const connectionMessage = 'I couldn’t reach your AI helper. Check your OpenAI key and internet connection, then try again.';
+const connectionMessage = 'I couldn’t reach your AI helper. Please try again later.';
 const messages = [];
 const drafts = new Map();
 let currentMode;
@@ -227,7 +227,7 @@ form.addEventListener('submit', async (event) => {
     });
     const data = await response.json();
     if (!response.ok) {
-      status.textContent = data.error ?? connectionMessage;
+      status.textContent = data.error?.message ?? connectionMessage;
       return;
     }
     if (chatting) {
