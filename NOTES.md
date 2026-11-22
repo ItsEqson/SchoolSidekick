@@ -30,6 +30,10 @@ Saved work and calendar events stay in the browser. The online site starts with 
 
 ## What's next
 
+AI instruction update — November 21, 2026: strengthened context references and same-number step explanations, lesson revisions with exact time/material constraints, fraction-error hints without the final sum, shopping redirects, and refusal of hazardous cleaner-mixing instructions even when framed as a science project. Existing response labels, quiz JSON, teacher keys, and other tool rules remain in place.
+
+Verification: all 16 automated tests passed. Five live AI checks also produced the intended behavior: same-number intermediate explanation without the final homework result; a 15-minute lesson using no supplies; a fraction misconception hint without the final sum; shopping redirection; and hazardous-experiment refusal. Re-run these manually with `node --env-file=.env check-tricky.mjs` and review the replies; this is a sample check, not a guarantee of every future response.
+
 Use the menu button above the workspace to hide or show the sidebar. Hiding it expands the main area to the available screen width. The prompt composer starts at one line and can be resized for longer messages.
 
 Conversation layout: all AI tools show user messages and AI replies in order above a bottom composer. Each tool restores its visible thread when switching sections, until reload or **Start a new conversation**. Replies retain hint visuals, collapsible teacher answer keys, inline interactive quizzes, and individual save buttons.
