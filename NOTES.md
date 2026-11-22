@@ -30,6 +30,8 @@ Saved work and calendar events stay in the browser. The online site starts with 
 
 ## What's next
 
+Follow-up questions: after a successful AI reply, the question box changes to **Ask a follow-up question**. Enter a question such as “Can you explain that more simply?” or “Make the lesson 20 minutes.” Each tool keeps its own context until the page reloads. **Start a new conversation** clears the current tool's context. The AI receives the original exchange and up to three recent exchanges, with each message limited to 2,400 characters. Failed requests preserve the question and previous answer so users can retry. Quiz context includes questions and choices, without hidden answers.
+
 Try sample school questions and review the replies with a teacher before recording the demo.
 
 ## MVP 1 check — November 20, 2026

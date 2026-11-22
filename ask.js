@@ -26,7 +26,7 @@ async function readQuestion(request) {
     if (typeof data?.mode !== 'string' || !Object.hasOwn(modes, data.mode) || typeof data.question !== 'string') return null;
     const question = data.question.trim();
     if (!question || question.length > 4000) return null;
-    const history = data.mode === 'chat' ? data.history ?? [] : [];
+    const history = data.history ?? [];
     if (!Array.isArray(history) || history.length > 8 || history.length % 2 !== 0) return null;
     if (!history.every((entry, index) => entry?.role === (index % 2 ? 'assistant' : 'user')
       && typeof entry.content === 'string' && entry.content.length <= 2400)) return null;

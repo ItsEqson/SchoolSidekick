@@ -68,12 +68,36 @@ const chat = document.querySelector('#chat');
 const savedError = document.querySelector('#saved-error');
 const savedItems = document.querySelector('#saved-items');
 const connectionMessage = 'I couldn’t reach your AI helper. Please try again later.';
-const messages = [];
+const conversations = new Map();
+const newConversation = document.querySelector('#new-conversation');
+const conversationHelp = document.querySelector('#conversation-help');
 const drafts = new Map();
 let currentMode;
 let currentAnswer;
 let asking = false;
 let hasQuiz = false;
+
+function updateComposer() {
+  const continuing = (conversations.get(currentMode)?.length ?? 0) > 0;
+  questionLabel.textContent = continuing ? 'Ask a follow-up question' : tools[currentMode].prompt;
+  ask.textContent = continuing ? 'Send follow-up' : tools[currentMode].button;
+  newConversation.hidden = !continuing;
+  conversationHelp.hidden = !continuing;
+}
+
+newConversation.addEventListener('click', () => {
+  if (asking) return;
+  conversations.delete(currentMode);
+  question.value = '';
+  drafts.delete(currentMode);
+  result.hidden = true;
+  currentAnswer = null;
+  if (currentMode === 'quiz') { hasQuiz = false; quizPanel.hidden = true; }
+  if (currentMode === 'chat') chat.replaceChildren();
+  status.textContent = '';
+  updateComposer();
+  question.focus();
+});
 
 function textElement(tag, text) {
   const element = document.createElement(tag);
@@ -151,6 +175,7 @@ function selectTool(mode) {
   question.placeholder = `Example: ${tool.example}`;
   question.value = drafts.get(mode) ?? '';
   ask.textContent = tool.button;
+  updateComposer();
   chat.hidden = mode !== 'chat';
   result.hidden = true;
   currentAnswer = null;
@@ -225,15 +250,15 @@ form.addEventListener('submit', async (event) => {
   }
 
   const mode = currentMode;
+  const messages = conversations.get(mode) ?? [];
   const chatting = mode === 'chat';
   asking = true;
   ask.disabled = true;
+  newConversation.disabled = true;
   example.disabled = true;
   question.readOnly = true;
   for (const button of menu.querySelectorAll('button')) button.disabled = true;
   status.textContent = 'Thinking…';
-  result.hidden = true;
-  currentAnswer = null;
   const pending = chatting ? addMessage('user', input) : null;
   if (mode === 'quiz') quizPanel.hidden = true;
   let answered = false;
@@ -241,7 +266,7 @@ form.addEventListener('submit', async (event) => {
     const response = await fetch('/api/ask', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode, question: input, history: chatting ? messages.slice(-8) : [] }),
+      body: JSON.stringify({ mode, question: input, history: messages }),
     });
     const data = await response.json();
     if (!response.ok) {
@@ -249,18 +274,26 @@ form.addEventListener('submit', async (event) => {
       return;
     }
     if (mode === 'quiz' && data.quiz) {
+      result.hidden = true;
       renderQuiz(quizPanel, data.quiz, (title, summary, button) => {
         saveWork(makeAnswer('Practice quiz', title, summary), button);
       });
       hasQuiz = true;
     } else if (chatting) {
       addMessage('assistant', data.answer, true);
-      messages.push({ role: 'user', content: input.slice(0, 2400) }, { role: 'assistant', content: data.answer.slice(0, 2400) });
-      if (messages.length > 8) messages.splice(0, 2);
-      question.value = '';
     } else {
       displayAnswer(mode, data.answer);
     }
+    // Keep the original topic plus the three most recent exchanges.
+    // Quiz context excludes hidden answers and explanations.
+    const context = data.quiz ? JSON.stringify({ title: data.quiz.title,
+      questions: data.quiz.questions.map(({ prompt, options }) => ({ prompt, options })) }) : data.answer;
+    messages.push({ role: 'user', content: input.slice(0, 2400) },
+      { role: 'assistant', content: context.slice(0, 2400) });
+    if (messages.length > 8) messages.splice(2, messages.length - 8);
+    conversations.set(mode, messages);
+    question.value = '';
+    updateComposer();
     answered = true;
     status.textContent = '';
   } catch {
@@ -270,6 +303,7 @@ form.addEventListener('submit', async (event) => {
     if (!answered) pending?.remove();
     asking = false;
     ask.disabled = false;
+    newConversation.disabled = false;
     example.disabled = false;
     question.readOnly = false;
     for (const button of menu.querySelectorAll('button')) button.disabled = false;
