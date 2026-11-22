@@ -24,11 +24,22 @@ Saved work and calendar events stay in the browser. The online site starts with 
 - Student page: homework hints, a calendar, study guides and practice, class notes, essay feedback, and a school chatbot.
 - Homework helper gives numbered hints, a similar worked example, and an optional **Picture it** section with fraction bars or a simple labeled text diagram. It ends with **Your turn** and leaves the homework answer for the student. To try it, enter “How should I start adding 2/3 and 3/4? Please show a visual.” and click **Get a hint**.
 - Teacher page: short writing feedback, one-day lesson plans, and activities and tests with a collapsible answer key. Remove student details before submitting work and review drafts before use.
+- Teacher Practice test: paste a topic, grade, and teacher-approved notes to draft six original short-answer questions (or request 1–12), with a collapsed answer key and explanations. Review every draft before sharing. Tests can be revised through follow-ups and saved in the teacher workspace. This prototype has no sign-in; the teacher area is separate but is not access-controlled. Do not use it for confidential real tests or keys.
 - Save responses and calendar events in your browser. Saves on this computer only for now
 - Both pages are available on the local preview. They organize tools and saved work by role, with no separate accounts or sign-in.
 - AI tools answer within their own purpose and redirect unrelated requests. The calendar saves events without using AI.
 
-## What's next
+## Teacher practice tests — November 21, 2026
+
+Added a separate **Practice test** tool to the teacher workspace. The existing activities-and-tests tool remains available. The simplest version creates six original short-answer questions, or a requested count from 1 to 12, from teacher-approved notes pasted with the topic and grade. Missing notes trigger a clarification. Each numbered answer has an explanation, and every draft asks the teacher to check it against the approved notes before sharing.
+
+The server checks the generated structure before displaying a draft. An incomplete or malformed draft follows the existing error path, preserving the request for retry. Answer keys start collapsed and remain separate when saving and reopening teacher work. Follow-ups can revise the full test. Student navigation and saved work do not include teacher practice tests. This is workspace separation only: there are still no accounts or access controls. Do not use this prototype to store confidential real exams or answer keys.
+
+Try it: open `/teacher`, choose **Practice test**, click **Try an example**, then **Draft a practice test**. Expand **Teacher answer key** to review answers and explanations. Use **Save this answer** to keep the draft in this browser, or ask “Make it three questions instead.”
+
+Verification: 20 automated checks pass, covering draft validation, answer-key separation, saving/reopening, student workspace separation, revisions/context, and existing tools/key handling. Live sample checks generated a six-question fractions test with correct answers and explanations, revised it to three questions, and requested source notes when absent. Safety checks refused an existing exam key, hazardous cleaner instructions, and bullying. The student Studying tool did not supply a teacher key. These samples do not guarantee every future answer; teacher review remains required. Repeat with `npm test` and `node check-practice.mjs` (requires the local MindDo settings).
+
+## Earlier progress
 
 AI instruction update — November 21, 2026: strengthened context references and same-number step explanations, lesson revisions with exact time/material constraints, fraction-error hints without the final sum, shopping redirects, and refusal of hazardous cleaner-mixing instructions even when framed as a science project. Existing response labels, quiz JSON, teacher keys, and other tool rules remain in place.
 

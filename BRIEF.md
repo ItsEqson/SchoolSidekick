@@ -39,8 +39,9 @@ Plan: Collect as little information as possible, protect accounts, explain who c
 2. The user can get practice questions on a topic to prepare for a test.
 3. The user can, as a teacher, ask the AI to draft a lesson plan.
 4. The AI gives correct, safe answers to real questions.
+## Added features
+- Teachers can generate an original practice test from approved notes, with a separate answer key and explanations. Review drafts before use. The current teacher workspace has no sign-in or account protection.
 ## Maybe later (not yet)
-- The user can, as a teacher, generate a practice test with an answer key.
 - The user can check practice answers and see explanations for mistakes.
 - The user can press a Report this answer button on any AI reply.
 - The user can, as a teacher, edit an AI lesson plan before using it.

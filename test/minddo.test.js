@@ -93,8 +93,8 @@ test('MindDo caching, expiry, errors, and bounded OpenAI refresh', async (t) => 
       const history = [{ role: 'user', content: 'A sixth-grade water-cycle lesson.' },
         { role: 'assistant', content: 'Learning goal: Explain evaporation.' }];
       queue = [key('test-follow-up')];
-      for (const mode of ['hint', 'practice', 'notes', 'essay', 'chat', 'feedback', 'lesson', 'test', 'quiz']) {
-        queue.push(mode === 'quiz' ? { body: { output: [{ content: [{ text: 'CLARIFY\nWhich part would you like explained?' }] }] } } : success);
+      for (const mode of ['hint', 'practice', 'notes', 'essay', 'chat', 'feedback', 'lesson', 'test', 'quiz', 'practiceTest']) {
+        queue.push(['quiz', 'practiceTest'].includes(mode) ? { body: { output: [{ content: [{ text: 'CLARIFY\nWhich part would you like explained?' }] }] } } : success);
         const response = await handleAsk(request({ mode, question: 'Explain that more simply.', history }));
         assert.equal(response.status, 200);
         const sent = JSON.parse(calls.at(-1).options.body);

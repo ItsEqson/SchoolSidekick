@@ -33,6 +33,12 @@ const studentTools = {
   },
 };
 const teacherTools = {
+  practiceTest: {
+    name: 'Practice test', icon: '?', description: 'Draft six original questions from teacher-approved notes, with a separate answer key and explanations. Check every draft before sharing. This teacher area has no sign-in yet.',
+    prompt: 'Share the topic, grade, and teacher-approved notes (no private details). You can request 1–12 questions.',
+    example: 'Make a six-question practice test for sixth grade. Topic: the water cycle. Approved class notes: Evaporation changes liquid water into water vapor when heated. Condensation changes water vapor into liquid droplets when cooled. Clouds contain tiny water droplets or ice crystals. Precipitation is water falling from clouds as rain, snow, sleet, or hail. Runoff flows over land into rivers and lakes. The Sun supplies energy for evaporation.',
+    button: 'Draft a practice test', result: 'Practice test draft',
+  },
   feedback: {
     name: 'Improvement', icon: '↗', description: 'Get short, actionable suggestions you can share with a student.',
     prompt: 'Paste a short excerpt with identifying details removed', example: 'In the story, the character moved to a new town. She was nervous. She made a friend and I think she changed.', button: 'Suggest improvements', result: 'Suggested improvements',
@@ -213,7 +219,7 @@ function addMessage(role, text, saveable = false) {
   const content = document.createElement('div');
   content.className = 'message-content';
   const heading = /^\s*(?:#{1,6}\s+)?\*{0,2}answer key\s*:?\*{0,2}[^\S\n]*$/im;
-  const marker = role === 'assistant' && mode === 'test' ? heading.exec(text) : null;
+  const marker = role === 'assistant' && ['test', 'practiceTest'].includes(mode) ? heading.exec(text) : null;
   const answer = marker ? text.slice(0, marker.index).trim() : text;
   const key = marker ? text.slice(marker.index + marker[0].length).trim() : '';
   if (role === 'assistant' && mode === 'hint') renderHint(content, answer);
@@ -255,7 +261,7 @@ function displayAnswer(mode, text) {
   const tool = tools[mode];
   // The test uses a standalone heading so teachers can collapse the key.
   const heading = /^\s*(?:#{1,6}\s+)?\*{0,2}answer key\s*:?\*{0,2}[^\S\n]*$/im;
-  const marker = mode === 'test' ? heading.exec(text) : null;
+  const marker = ['test', 'practiceTest'].includes(mode) ? heading.exec(text) : null;
   const answer = marker ? text.slice(0, marker.index).trim() : text;
   const key = marker ? text.slice(marker.index + marker[0].length).trim() : '';
   answerTitle.textContent = tool.result;
