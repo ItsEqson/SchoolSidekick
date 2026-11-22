@@ -1,13 +1,13 @@
 :root {
-  color: #162e35;
-  background: #f5f4ed;
+  color: #202124;
+  background: #fff;
   font-family: Inter, "Segoe UI", sans-serif;
-  --ink: #162e35;
-  --teal: #28534c;
-  --line: #dfdfd4;
-  --muted: #4f645f;
-  --paper: #fffdf7;
-  --green: #e9f1e4;
+  --ink: #202124;
+  --teal: #343434;
+  --line: #eaeaea;
+  --muted: #6e7075;
+  --paper: #fff;
+  --green: #fff6d9;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -139,4 +139,61 @@ summary strong { font-size: 14px; }
   .brand { font-size: 17px; gap: 5px; }
   .roles a { padding-inline: 7px; }
   .event-fields { align-items: stretch; flex-direction: column; }
+}
+
+/* App shell: persistent navigation and one dedicated section at a time. */
+.site-header { position: fixed; inset: 0 auto auto 0; width: 276px; height: 164px; border-right: 1px solid var(--line); z-index: 2; }
+.header-inner { width: auto; margin: 0; padding: 28px 22px 20px; display: flex; flex-direction: column; align-items: stretch; gap: 20px; }
+.brand { font-size: 23px; letter-spacing: -1px; }
+.brand span { background: #fff2c5; color: #d49a00; border-radius: 50%; }
+.roles { align-self: flex-start; background: #f7f7f7; border: 0; }
+.roles a { color: var(--muted); font-size: 12px; }
+.roles a[aria-current] { color: #202124; background: #ffca24; }
+.sidebar { position: fixed; inset: 164px auto 0 0; width: 276px; border: 0; border-right: 1px solid var(--line); border-radius: 0; padding: 20px 12px; overflow-y: auto; display: flex; flex-direction: column; z-index: 2; }
+.sidebar h2 { text-transform: uppercase; letter-spacing: 1.2px; font-size: 11px; font-weight: 500; color: var(--muted); margin: 0 12px 16px; }
+#tool-menu { gap: 5px; }
+#tool-menu button { padding: 10px 12px; border-radius: 13px; color: #64666b; font-size: 15px; gap: 8px; min-height: 46px; }
+#tool-menu button strong { font-weight: 500; }
+#tool-menu button span { background: transparent; color: inherit; font-size: 20px; }
+#tool-menu button[aria-pressed="true"], #tool-menu button[aria-pressed="true"] span { background: #ffca24; color: #1b1b1b; border-color: transparent; }
+#tool-menu button:hover:enabled { background: #fff3c7; }
+.sidebar-note { margin: auto 12px 0; padding-top: 36px; font-size: 12px; line-height: 1.6; color: var(--muted); }
+.layout { width: auto; margin-left: 276px; padding: 52px clamp(24px, 5vw, 80px) 64px; }
+.intro { background: none; color: var(--ink); padding: 0 0 36px; border-radius: 0; }
+.intro h1 { font-family: inherit; font-weight: 750; font-size: clamp(32px, 4vw, 54px); line-height: 1.12; letter-spacing: -2px; }
+.intro p { color: var(--muted); max-width: 680px; margin-top: 16px; line-height: 1.7; }
+.work-area { display: block; margin: 0; }
+.workspace { border-radius: 22px; padding: clamp(20px, 3vw, 36px); min-height: 420px; }
+.workspace > h2, .tool-description { display: none; }
+textarea, #event-title { background: #fcfcfc; border-color: #dcdcdc; }
+.primary { background: #ffca24; color: #202124; border-color: #ffca24; }
+.primary:hover:enabled { background: #f1bc12; }
+.answer { background: #fff9e8; padding: 22px; }
+.saved { min-height: 420px; }
+.saved-heading h2 { font-size: 20px; }
+@media (max-width: 760px) {
+  .site-header, .sidebar { width: 212px; }
+  .header-inner { padding-inline: 14px; }
+  .brand { font-size: 18px; letter-spacing: -.7px; }
+  .brand span { flex-shrink: 0; }
+  .layout { margin-left: 212px; padding: 28px 20px; }
+  #tool-menu { grid-template-columns: 1fr; }
+  #tool-menu button { font-size: 13px; padding: 7px; }
+}
+@media (max-width: 520px) {
+  .site-header, .sidebar { width: 148px; }
+  .header-inner { padding: 20px 10px; }
+  .brand { font-size: 13px; gap: 5px; letter-spacing: -.4px; }
+  .brand span { width: 22px; height: 22px; }
+  .roles a { padding: 7px; font-size: 11px; }
+  .sidebar { padding: 16px 7px; }
+  .sidebar h2 { margin-inline: 5px; font-size: 9px; }
+  #tool-menu button { grid-template-columns: 22px minmax(0, 1fr); gap: 4px; font-size: 12px; }
+  #tool-menu button span { width: 22px; font-size: 17px; }
+  .layout { margin-left: 148px; padding: 24px 12px; }
+  .intro h1 { font-size: 27px; letter-spacing: -1px; overflow-wrap: anywhere; }
+  .workspace { padding: 14px; border-radius: 15px; }
+  .saved-items { grid-template-columns: 1fr; }
+  .form-actions { align-items: stretch; flex-direction: column; }
+  .sidebar-note { margin-inline: 5px; font-size: 10px; }
 }

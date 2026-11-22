@@ -50,6 +50,14 @@ test('composer continues, isolates tools, preserves failed input, and resets con
     choose('feedback');
     await send('Review my paragraph');
     assert.deepEqual(requests.at(-1).history, []);
+    choose('saved');
+    assert.equal(node('#saved').hidden, false);
+    assert.equal(node('.workspace').hidden, true);
+    assert.equal(node('#page-title').textContent, 'Saved work');
+    choose('lesson');
+    assert.equal(node('#saved').hidden, true);
+    assert.equal(node('.workspace').hidden, false);
+    assert.equal(node('#page-title').textContent, 'Making lesson plans');
     choose('lesson');
     await send('Add an activity');
     assert.equal(requests.at(-1).history.length, 4);

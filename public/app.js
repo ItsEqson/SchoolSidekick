@@ -50,6 +50,7 @@ const teacherTools = {
 const workspace = location.pathname === '/teacher' ? 'teacher' : 'student';
 const isTeacher = workspace === 'teacher';
 const tools = isTeacher ? teacherTools : studentTools;
+tools.saved = { name: 'Saved work', icon: '▤', description: 'Revisit the work you saved on this browser.' };
 const menu = document.querySelector('#tool-menu');
 const form = document.querySelector('#ask-form');
 const question = document.querySelector('#question');
@@ -156,17 +157,25 @@ function showStorageError() {
 
 function selectTool(mode) {
   if (currentMode === mode || asking) return;
-  if (currentMode && currentMode !== 'planner') drafts.set(currentMode, question.value);
+  if (currentMode && !['planner', 'saved'].includes(currentMode)) drafts.set(currentMode, question.value);
   currentMode = mode;
   const tool = tools[mode];
   for (const button of menu.querySelectorAll('button')) {
     button.setAttribute('aria-pressed', button.dataset.mode === mode);
   }
   document.querySelector('#active-tool').textContent = tool.name;
+  document.querySelector('#page-title').textContent = tool.name;
+  document.querySelector('#page-description').textContent = tool.description;
+  document.querySelector('.workspace').hidden = mode === 'saved';
+  document.querySelector('#saved').hidden = mode !== 'saved';
   document.querySelector('#tool-description').textContent = tool.description;
   document.querySelector('#ai-panel').hidden = mode === 'planner';
   document.querySelector('#planner').hidden = mode !== 'planner';
   quizPanel.hidden = mode !== 'quiz' || !hasQuiz;
+  if (mode === 'saved') {
+    renderSaved();
+    return;
+  }
   if (mode === 'planner') {
     renderPlanner();
     return;
