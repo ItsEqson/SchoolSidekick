@@ -7,7 +7,7 @@ test('composer continues, isolates tools, preserves failed input, and resets con
     append(...nodes) { this.children.push(...nodes); }
     replaceChildren(...nodes) { this.children = nodes; }
     remove() {}
-    setAttribute() {}
+    setAttribute(name, value) { this[name] = value; }
     focus() {}
     addEventListener(name, handler) { this.listeners[name] = handler; }
     querySelectorAll() { return this.children; }
@@ -31,6 +31,15 @@ test('composer continues, isolates tools, preserves failed input, and resets con
   };
   try {
     await import('../public/app.js');
+    node('#sidebar-toggle').listeners.click();
+    assert.equal(node('#workspace-sidebar').hidden, true);
+    assert.equal(node('#workspace-header').hidden, true);
+    assert.equal(node('body')['data-sidebar-open'], 'false');
+    assert.equal(node('#sidebar-toggle')['aria-expanded'], 'false');
+    node('#sidebar-toggle').listeners.click();
+    assert.equal(node('#workspace-sidebar').hidden, false);
+    assert.equal(node('#workspace-header').hidden, false);
+    assert.equal(node('#sidebar-toggle')['aria-expanded'], 'true');
     const choose = (mode) => node('#tool-menu').children.find((button) => button.dataset.mode === mode).listeners.click();
     const send = async (text) => {
       node('#question').value = text;

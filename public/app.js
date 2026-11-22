@@ -50,6 +50,17 @@ const teacherTools = {
 const workspace = location.pathname === '/teacher' ? 'teacher' : 'student';
 const isTeacher = workspace === 'teacher';
 const tools = isTeacher ? teacherTools : studentTools;
+const sidebarToggle = document.querySelector('#sidebar-toggle');
+let sidebarOpen = true;
+sidebarToggle.addEventListener('click', () => {
+  sidebarOpen = !sidebarOpen;
+  document.querySelector('body').setAttribute('data-sidebar-open', String(sidebarOpen));
+  document.querySelector('#workspace-header').hidden = !sidebarOpen;
+  document.querySelector('#workspace-sidebar').hidden = !sidebarOpen;
+  sidebarToggle.setAttribute('aria-expanded', String(sidebarOpen));
+  sidebarToggle.setAttribute('aria-label', sidebarOpen ? 'Hide sidebar' : 'Show sidebar');
+  sidebarToggle.title = sidebarOpen ? 'Hide sidebar' : 'Show sidebar';
+});
 tools.saved = { name: 'Saved work', icon: '▤', description: 'Revisit the work you saved on this browser.' };
 const menu = document.querySelector('#tool-menu');
 const form = document.querySelector('#ask-form');

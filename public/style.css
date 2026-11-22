@@ -209,3 +209,21 @@ textarea, #event-title { background: #fcfcfc; border-color: #dcdcdc; }
   .form-actions { align-items: stretch; flex-direction: column; }
   .sidebar-note { margin-inline: 5px; font-size: 10px; }
 }
+
+body { --sidebar-width: 276px; }
+.sidebar-toggle { position: fixed; top: 10px; left: calc(var(--sidebar-width) + 12px); z-index: 5; width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); font-size: 21px; }
+.sidebar-toggle:hover { background: var(--green); }
+.layout { padding-top: 68px; }
+body[data-sidebar-open="false"] .layout { margin-left: 0; width: auto; }
+body[data-sidebar-open="false"] .sidebar-toggle { left: 12px; }
+#ask-form { padding: 10px 14px; border-radius: 18px; }
+#ask-form textarea { min-height: 32px; height: 36px; max-height: 180px; padding: 5px 0; }
+#ask-form label { margin-bottom: 3px; }
+#ask-form .form-actions { margin-top: 5px; gap: 6px 12px; }
+#ask-form .primary, #ask-form .secondary { padding: 6px 10px; font-size: 13px; }
+#ask-form .privacy { font-size: 11px; margin-top: 6px; }
+@media (max-width: 760px) { body { --sidebar-width: 212px; } }
+@media (max-width: 520px) {
+  body { --sidebar-width: 148px; }
+  #ask-form .form-actions { flex-direction: row; flex-wrap: wrap; align-items: center; }
+}

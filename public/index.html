@@ -3,13 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#ffca24">
+  <meta name="theme-color" content="#ffca24">
   <title>SchoolSidekick</title>
   <link rel="stylesheet" href="/style.css">
   <script type="module" src="/app.js"></script>
 </head>
-<body>
-  <header class="site-header">
+<body data-sidebar-open="true">
+  <button id="sidebar-toggle" class="sidebar-toggle" type="button" aria-expanded="true" aria-controls="workspace-header workspace-sidebar" aria-label="Hide sidebar" title="Hide sidebar">☰</button>
+  <header class="site-header" id="workspace-header">
     <div class="header-inner">
       <a class="brand" href="/student"><span aria-hidden="true">✦</span> SchoolSidekick</a>
       <nav class="roles" aria-label="Workspaces">
@@ -25,7 +26,7 @@
     </section>
 
     <div class="work-area">
-      <aside class="sidebar">
+      <aside class="sidebar" id="workspace-sidebar">
         <nav aria-labelledby="tool-heading">
           <h2 id="tool-heading">Your workspace</h2>
           <div id="tool-menu"></div>
@@ -40,7 +41,7 @@
           <div id="chat" class="chat" role="log" aria-label="Conversation" aria-live="polite"></div>
           <form class="ask-form" id="ask-form">
             <label for="question" id="question-label"></label>
-            <textarea id="question" rows="4" maxlength="4000" required aria-describedby="privacy"></textarea>
+            <textarea id="question" rows="1" maxlength="4000" required aria-describedby="privacy"></textarea>
             <div class="form-actions">
               <button class="example" id="example" type="button">Try an example <span aria-hidden="true">↗</span></button>
               <button class="primary" id="ask" type="submit"></button>

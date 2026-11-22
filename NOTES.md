@@ -30,6 +30,8 @@ Saved work and calendar events stay in the browser. The online site starts with 
 
 ## What's next
 
+Use the menu button above the workspace to hide or show the sidebar. Hiding it expands the main area to the available screen width. The prompt composer starts at one line and can be resized for longer messages.
+
 Conversation layout: all AI tools show user messages and AI replies in order above a bottom composer. Each tool restores its visible thread when switching sections, until reload or **Start a new conversation**. Replies retain hint visuals, collapsible teacher answer keys, inline interactive quizzes, and individual save buttons.
 
 Sidebar layout: tool navigation stays on the left with a yellow selected state. Each tool fills the main workspace and has its own page heading. Saved work opens as a separate section from the sidebar. The sidebar becomes narrower on small screens.
