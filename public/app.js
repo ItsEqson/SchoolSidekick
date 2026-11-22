@@ -70,6 +70,7 @@ const savedError = document.querySelector('#saved-error');
 const savedItems = document.querySelector('#saved-items');
 const connectionMessage = 'I couldn’t reach your AI helper. Please try again later.';
 const conversations = new Map();
+const transcripts = new Map();
 const newConversation = document.querySelector('#new-conversation');
 const conversationHelp = document.querySelector('#conversation-help');
 const drafts = new Map();
@@ -94,7 +95,8 @@ newConversation.addEventListener('click', () => {
   result.hidden = true;
   currentAnswer = null;
   if (currentMode === 'quiz') { hasQuiz = false; quizPanel.hidden = true; }
-  if (currentMode === 'chat') chat.replaceChildren();
+  transcripts.delete(currentMode);
+  chat.replaceChildren();
   status.textContent = '';
   updateComposer();
   question.focus();
@@ -185,25 +187,40 @@ function selectTool(mode) {
   question.value = drafts.get(mode) ?? '';
   ask.textContent = tool.button;
   updateComposer();
-  chat.hidden = mode !== 'chat';
+  chat.hidden = false;
+  chat.replaceChildren(...(transcripts.get(mode) ?? []));
   result.hidden = true;
   currentAnswer = null;
   status.textContent = '';
 }
 
 function addMessage(role, text, saveable = false) {
+  const mode = currentMode;
   const message = document.createElement('article');
   message.className = `message ${role}`;
-  message.append(textElement('strong', role === 'user' ? 'You' : 'SchoolSidekick'), textElement('p', text));
+  message.append(textElement('strong', role === 'user' ? 'You' : 'SchoolSidekick'));
+  const content = document.createElement('div');
+  content.className = 'message-content';
+  const heading = /^\s*(?:#{1,6}\s+)?\*{0,2}answer key\s*:?\*{0,2}[^\S\n]*$/im;
+  const marker = role === 'assistant' && mode === 'test' ? heading.exec(text) : null;
+  const answer = marker ? text.slice(0, marker.index).trim() : text;
+  const key = marker ? text.slice(marker.index + marker[0].length).trim() : '';
+  if (role === 'assistant' && mode === 'hint') renderHint(content, answer);
+  else content.append(textElement('p', answer));
+  message.append(content);
+  if (key) addKey(message, key);
   if (saveable) {
     const button = textElement('button', 'Save this answer');
     button.type = 'button';
     button.className = 'secondary';
-    const item = makeAnswer(tools.chat.name, 'Chat answer', text);
+    const item = makeAnswer(tools[mode].name, tools[mode].result ?? 'Chat answer', answer, key);
     button.addEventListener('click', () => saveWork(item, button));
     message.append(button);
   }
   chat.append(message);
+  const transcript = transcripts.get(mode) ?? [];
+  transcript.push(message);
+  transcripts.set(mode, transcript);
   chat.scrollTop = chat.scrollHeight;
   return message;
 }
@@ -268,7 +285,7 @@ form.addEventListener('submit', async (event) => {
   question.readOnly = true;
   for (const button of menu.querySelectorAll('button')) button.disabled = true;
   status.textContent = 'Thinking…';
-  const pending = chatting ? addMessage('user', input) : null;
+  const pending = addMessage('user', input);
   if (mode === 'quiz') quizPanel.hidden = true;
   let answered = false;
   try {
@@ -284,14 +301,16 @@ form.addEventListener('submit', async (event) => {
     }
     if (mode === 'quiz' && data.quiz) {
       result.hidden = true;
-      renderQuiz(quizPanel, data.quiz, (title, summary, button) => {
+      const quizMessage = addMessage('assistant', 'Your practice quiz');
+      const inlineQuiz = document.createElement('section');
+      inlineQuiz.className = 'quiz-panel';
+      quizMessage.append(inlineQuiz);
+      renderQuiz(inlineQuiz, data.quiz, (title, summary, button) => {
         saveWork(makeAnswer('Practice quiz', title, summary), button);
       });
       hasQuiz = true;
-    } else if (chatting) {
-      addMessage('assistant', data.answer, true);
     } else {
-      displayAnswer(mode, data.answer);
+      addMessage('assistant', data.answer, true);
     }
     // Keep the original topic plus the three most recent exchanges.
     // Quiz context excludes hidden answers and explanations.
@@ -309,14 +328,19 @@ form.addEventListener('submit', async (event) => {
     status.textContent = connectionMessage;
   } finally {
     if (mode === 'quiz' && !answered && hasQuiz) quizPanel.hidden = false;
-    if (!answered) pending?.remove();
+    if (!answered) {
+      pending.remove();
+      const transcript = transcripts.get(mode);
+      const index = transcript?.indexOf(pending) ?? -1;
+      if (index >= 0) transcript.splice(index, 1);
+    }
     asking = false;
     ask.disabled = false;
     newConversation.disabled = false;
     example.disabled = false;
     question.readOnly = false;
     for (const button of menu.querySelectorAll('button')) button.disabled = false;
-    if (chatting) question.focus();
+    question.focus();
   }
 });
 

@@ -6,6 +6,7 @@ test('composer continues, isolates tools, preserves failed input, and resets con
     children = []; listeners = {}; value = ''; hidden = true;
     append(...nodes) { this.children.push(...nodes); }
     replaceChildren(...nodes) { this.children = nodes; }
+    remove() {}
     setAttribute() {}
     focus() {}
     addEventListener(name, handler) { this.listeners[name] = handler; }
@@ -45,7 +46,7 @@ test('composer continues, isolates tools, preserves failed input, and resets con
     fail = true;
     await send('Add a diagram');
     assert.equal(node('#question').value, 'Add a diagram');
-    assert.equal(node('#answer').hidden, false);
+    assert.equal(node('#chat').children.filter((message) => message.className === 'message assistant').length, 2);
     fail = false;
     choose('feedback');
     await send('Review my paragraph');
@@ -58,10 +59,12 @@ test('composer continues, isolates tools, preserves failed input, and resets con
     assert.equal(node('#saved').hidden, true);
     assert.equal(node('.workspace').hidden, false);
     assert.equal(node('#page-title').textContent, 'Making lesson plans');
+    assert.equal(node('#chat').children.length, 4);
     choose('lesson');
     await send('Add an activity');
     assert.equal(requests.at(-1).history.length, 4);
     node('#new-conversation').listeners.click();
+    assert.equal(node('#chat').children.length, 0);
     await send('A new topic');
     assert.deepEqual(requests.at(-1).history, []);
   } finally {
